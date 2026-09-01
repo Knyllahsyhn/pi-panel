@@ -83,3 +83,10 @@ def test_unlesbare_zeile_ruft_nicht():
     p = Player(FakeStarter(), warte=lambda _: None, bei_streamende=lambda: gesehen.append(1))
     p.verarbeite_ereignis(b"nicht json")
     assert gesehen == []
+
+
+def test_tls_verify_wird_durchgereicht():
+    from panel.player import mpv_argumente
+
+    assert "--tls-verify=no" in mpv_argumente(1, "/tmp/s", tls_verify=False)
+    assert "--tls-verify=yes" in mpv_argumente(1, "/tmp/s", tls_verify=True)

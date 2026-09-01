@@ -10,11 +10,8 @@ SOCKET_PFAD = "/run/panel/mpv.sock"
 MAX_BACKOFF_S = 30.0
 
 
-def mpv_starten(wid, socket_pfad=SOCKET_PFAD):
-    os.makedirs(os.path.dirname(socket_pfad), exist_ok=True)
-    if os.path.exists(socket_pfad):
-        os.unlink(socket_pfad)
-    subprocess.Popen([
+def mpv_argumente(wid, socket_pfad, tls_verify):
+    return [
         "mpv",
         "--idle=yes",
         "--input-ipc-server=%s" % socket_pfad,
@@ -24,8 +21,15 @@ def mpv_starten(wid, socket_pfad=SOCKET_PFAD):
         "--no-osc",
         "--no-input-default-bindings",
         "--hwdec=auto-safe",
-        "--tls-verify=no",
-    ])
+        "--tls-verify=%s" % ("yes" if tls_verify else "no"),
+    ]
+
+
+def mpv_starten(wid, socket_pfad=SOCKET_PFAD, tls_verify=False):
+    os.makedirs(os.path.dirname(socket_pfad), exist_ok=True)
+    if os.path.exists(socket_pfad):
+        os.unlink(socket_pfad)
+    subprocess.Popen(mpv_argumente(wid, socket_pfad, tls_verify))
     for _ in range(50):
         if os.path.exists(socket_pfad):
             break
