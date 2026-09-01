@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Echte Konfiguration und Zugangsdaten gehoeren auf den Pi, nicht ins Repo
+panel.yaml
+*.pass
+.venv/

@@ -1,0 +1,34 @@
+frigate:
+  base_url: https://192.168.30.2:8971
+  user: panel
+  password_file: /etc/panel/frigate.pass
+  tls_verify: false
+
+mqtt:
+  host: 192.168.30.2
+  port: 1883
+  user: panel-kueche
+  password_file: /etc/panel/mqtt.pass
+  topic_prefix: frigate
+
+anzeige:
+  basis_kamera: klingel
+  rueckfall_manuell_s: 60
+  rueckfall_auto_s: 30
+  sperrzeit_auto_s: 120
+
+quelle:
+  modus: mjpeg
+  mjpeg:
+    pfad: "/api/{cam}?fps=5&h=480&bbox=0"
+  rtsp:
+    basis: "rtsp://192.168.30.2:8554"
+    suffix: "_sub"
+
+kameras:
+  - {name: klingel,   label: "Klingel",    springt: true}
+  - {name: haustuer,  label: "Haustuer",   springt: true}
+  - {name: einfahrt1, label: "Einfahrt 1", springt: false}
+  - {name: einfahrt2, label: "Einfahrt 2", springt: false}
+  - {name: pergola,   label: "Pergola",    springt: false}
+  - {name: garten,    label: "Garten",     springt: false}
