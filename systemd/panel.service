@@ -1,5 +1,6 @@
 [Unit]
 Description=Kamera-Panel
+Wants=network-online.target
 After=network-online.target
 
 [Service]
