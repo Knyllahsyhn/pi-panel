@@ -18,7 +18,7 @@ anzeige:
   sperrzeit_auto_s: 120
 
 quelle:
-  modus: mjpeg
+  modus: rtsp
   mjpeg:
     pfad: "/api/{cam}?fps=5&h=480&bbox=0"
   rtsp:
