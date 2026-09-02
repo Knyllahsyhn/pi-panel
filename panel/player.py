@@ -62,7 +62,12 @@ class Player:
             daten = json.loads(zeile.decode())
         except (ValueError, UnicodeDecodeError):
             return
-        if daten.get("event") == "end-file":
+        if daten.get("event") != "end-file":
+            return
+        # loadfile replace beendet den laufenden Strom ebenfalls mit end-file.
+        # Ohne diese Pruefung meldet jeder normale Kamerawechsel einen
+        # Verbindungsabbruch und loest einen ueberfluessigen Neuversuch aus.
+        if daten.get("reason") in ("eof", "error"):
             self._bei_streamende()
 
     def beobachten(self):

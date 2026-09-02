@@ -3,15 +3,35 @@
 import gi
 
 gi.require_version("Gtk", "3.0")
-from gi.repository import GLib, Gtk  # noqa: E402
+gi.require_version("Gdk", "3.0")
+from gi.repository import Gdk, GLib, Gtk  # noqa: E402
 
 KNOPFBREITE = 160
+ERSATZGROESSE = (800, 480)
+
+
+def bildschirmgroesse():
+    """Groesse des primaeren Monitors, mit Rueckfall auf die Panelgroesse."""
+    anzeige = Gdk.Display.get_default()
+    if anzeige is None:
+        return ERSATZGROESSE
+    monitor = anzeige.get_primary_monitor() or anzeige.get_monitor(0)
+    if monitor is None:
+        return ERSATZGROESSE
+    geometrie = monitor.get_geometry()
+    return geometrie.width, geometrie.height
 
 
 class Fenster:
     def __init__(self, kameras, bei_knopfdruck):
         self._fenster = Gtk.Window()
         self._fenster.set_decorated(False)
+        # fullscreen() ist eine Bitte an den Fenstermanager. Unter xinit laeuft
+        # keiner, deshalb die Groesse zusaetzlich explizit setzen, sonst bekommt
+        # das Fenster nur seine natuerliche Groesse.
+        breite, hoehe = bildschirmgroesse()
+        self._fenster.set_default_size(breite, hoehe)
+        self._fenster.move(0, 0)
         self._fenster.fullscreen()
         self._fenster.connect("destroy", Gtk.main_quit)
 

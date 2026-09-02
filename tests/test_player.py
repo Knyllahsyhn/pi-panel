@@ -97,3 +97,18 @@ def test_hwdec_wird_durchgereicht():
 
     assert "--hwdec=v4l2m2m" in mpv_argumente(1, "/tmp/s", False, hwdec="v4l2m2m")
     assert "--hwdec=auto-safe" in mpv_argumente(1, "/tmp/s", False)
+
+
+def test_endfile_wegen_umschalten_ruft_nicht():
+    gesehen = []
+    p = Player(FakeStarter(), warte=lambda _: None, bei_streamende=lambda: gesehen.append(1))
+    for grund in ("stop", "redirect", "quit"):
+        p.verarbeite_ereignis(b'{"event":"end-file","reason":"%s"}' % grund.encode())
+    assert gesehen == []
+
+
+def test_endfile_wegen_fehler_ruft():
+    gesehen = []
+    p = Player(FakeStarter(), warte=lambda _: None, bei_streamende=lambda: gesehen.append(1))
+    p.verarbeite_ereignis(b'{"event":"end-file","reason":"error"}')
+    assert gesehen == [1]
