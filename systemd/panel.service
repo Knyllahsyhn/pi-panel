@@ -9,8 +9,9 @@ User=panel
 Group=panel
 RuntimeDirectory=panel
 Environment=DISPLAY=:0
-ExecStart=/usr/bin/xinit /usr/bin/python3 -m panel.main -- :0 -nocursor
-WorkingDirectory=/opt/pi-panel
+Environment=PYTHONUNBUFFERED=1
+WorkingDirectory=__ZIEL__
+ExecStart=/usr/bin/xinit __ZIEL__/systemd/panel-session.sh -- :0 -nocursor
 Restart=always
 RestartSec=5
 
