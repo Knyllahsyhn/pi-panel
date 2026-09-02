@@ -87,3 +87,28 @@ def test_stream_url_rtsp(konfigdatei):
     konfigdatei.write_text(inhalt)
     k = lade(konfigdatei)
     assert stream_url(k, "pergola") == "rtsp://192.168.30.2:8554/pergola_sub"
+
+
+def test_rtsp_braucht_keine_frigate_passwortdatei(konfigdatei, tmp_path):
+    inhalt = konfigdatei.read_text().replace("modus: mjpeg", "modus: rtsp")
+    fehlt = tmp_path / "gibtsnicht.pass"
+    inhalt = inhalt.replace(
+        "password_file: %s" % (tmp_path / "geheim.pass"),
+        "password_file: %s" % fehlt,
+        1,
+    )
+    konfigdatei.write_text(inhalt)
+    k = lade(konfigdatei)
+    assert k.frigate.passwort == ""
+    assert k.mqtt.passwort == "s3cr3t"
+
+
+def test_mjpeg_braucht_die_frigate_passwortdatei(konfigdatei, tmp_path):
+    inhalt = konfigdatei.read_text().replace(
+        "password_file: %s" % (tmp_path / "geheim.pass"),
+        "password_file: %s" % (tmp_path / "gibtsnicht.pass"),
+        1,
+    )
+    konfigdatei.write_text(inhalt)
+    with pytest.raises(KonfigFehler, match="gibtsnicht.pass"):
+        lade(konfigdatei)

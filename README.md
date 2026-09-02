@@ -44,6 +44,10 @@ sudo systemctl start panel
 
 `printf` statt `echo`, damit kein Zeilenumbruch im Passwort landet.
 
+**Zweite Passwortdatei nur im Modus `mjpeg`.** Dann meldet sich das Panel bei
+Frigate an und braucht zusaetzlich `/etc/panel/frigate.pass`, mit denselben
+Rechten. Im Modus `rtsp` wird sie nicht gelesen und darf fehlen.
+
 ## Konfiguration
 
 `/etc/panel/panel.yaml`, Vorlage siehe `panel.yaml.example`.
@@ -60,7 +64,12 @@ sudo systemctl start panel
 | `kameras[].springt` | ob eine Personenerkennung hier einen Sprung ausloest |
 
 Passwoerter stehen nie in dieser Datei, sondern in eigenen Dateien, auf die sie
-zeigt. Beide gehoeren `root:panel` mit Rechten `640`.
+zeigt. Sie gehoeren `root:panel` mit Rechten `640`.
+
+| Datei | Wird gebraucht |
+|---|---|
+| `/etc/panel/mqtt.pass` | immer |
+| `/etc/panel/frigate.pass` | nur bei `quelle.modus: mjpeg` |
 
 **`springt` sparsam setzen.** Jede Kamera an einer Strasse laesst das Panel bei
 jedem Passanten umschalten. Im Zweifel nur die Kamera an der Tuer.

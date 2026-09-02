@@ -90,11 +90,24 @@ def lade(pfad):
     if quelle.get("modus") not in ("mjpeg", "rtsp"):
         raise KonfigFehler("quelle.modus muss mjpeg oder rtsp sein")
 
+    # Im Modus rtsp meldet sich das Panel nirgends an. Die Frigate-Passwortdatei
+    # darf dann fehlen, statt den Start an einer Datei zu verhindern, die
+    # ohnehin nie gelesen wuerde.
+    if quelle["modus"] == "mjpeg":
+        frigate_passwort = _passwort(_pflicht(roh, "frigate.password_file"))
+    else:
+        frigate_pfad = (roh.get("frigate") or {}).get("password_file")
+        frigate_passwort = (
+            _passwort(frigate_pfad)
+            if frigate_pfad and Path(frigate_pfad).exists()
+            else ""
+        )
+
     return Konfig(
         frigate=Zugang(
             host_oder_url=_pflicht(roh, "frigate.base_url").rstrip("/"),
             user=_pflicht(roh, "frigate.user"),
-            passwort=_passwort(_pflicht(roh, "frigate.password_file")),
+            passwort=frigate_passwort,
             tls_verify=bool(roh["frigate"].get("tls_verify", True)),
         ),
         mqtt=Zugang(
