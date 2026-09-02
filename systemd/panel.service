@@ -7,11 +7,21 @@ After=network-online.target
 Type=simple
 User=panel
 Group=panel
+# Ohne PAMName legt logind keine Sitzung an, und ohne Sitzung bekommt Xorg
+# weder das virtuelle Terminal noch die Eingabe- und DRM-Geraete zugeteilt.
+# Symptom waere "parse_vt_settings: Cannot open /dev/tty0 (Permission denied)".
+PAMName=login
+TTYPath=/dev/tty7
+StandardInput=tty
+StandardOutput=journal
+StandardError=journal
+TTYVTDisallocate=yes
 RuntimeDirectory=panel
 Environment=DISPLAY=:0
 Environment=PYTHONUNBUFFERED=1
 WorkingDirectory=__ZIEL__
-ExecStart=/usr/bin/xinit __ZIEL__/systemd/panel-session.sh -- :0 -nocursor
+# vt7 muss zu TTYPath passen.
+ExecStart=/usr/bin/xinit __ZIEL__/systemd/panel-session.sh -- :0 vt7 -nocursor
 Restart=always
 RestartSec=5
 

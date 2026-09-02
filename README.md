@@ -121,6 +121,28 @@ sudo rm -f /tmp/.X0-lock
 sudo systemctl start panel
 ```
 
+**`parse_vt_settings: Cannot open /dev/tty0 (Permission denied)`.**
+Xorg bekommt kein virtuelles Terminal. Die Unit braucht dafuer `PAMName=login`
+zusammen mit `TTYPath=/dev/tty7`, und das `vt7` in der `ExecStart`-Zeile muss
+dazu passen. Nur mit einer logind-Sitzung erhaelt Xorg Terminal, Eingabegeraete
+und DRM-Zugriff.
+
+Hilft das nicht, laesst sich Xorg mit root-Rechten starten:
+
+```bash
+echo "needs_root_rights=yes" | sudo tee -a /etc/X11/Xwrapper.config
+```
+
+Ausfuehrlichere Meldungen als im Journal stehen in
+`/home/panel/.local/share/xorg/Xorg.0.log`.
+
+**Wayland statt X11.**
+Das Panel braucht X11, weil mpv per `--wid` in das GTK-Fenster eingebettet wird.
+Auf Raspberry Pi OS mit Wayland belegt Xwayland bereits `:0`, `xinit` scheitert
+dann mit `Server is already active for display 0`. Umstellen ueber `raspi-config`,
+Advanced Options, Wayland, X11. Achtung: **wayvnc funktioniert danach nicht
+mehr**, als Ersatz `x11vnc -display :0 -localhost` verwenden.
+
 **Kein X-Server, `xinit` bricht ab.**
 `/etc/X11/Xwrapper.config` muss `allowed_users=anybody` enthalten, sonst darf
 nur die Konsolensitzung X starten. `install.sh` setzt das.
