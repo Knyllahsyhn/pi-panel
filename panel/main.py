@@ -144,6 +144,7 @@ class Panel:
                 return
             self._player.setze_header([self._header])
         self._player.zeige(stream_url(self._konfig, kamera))
+        self._fenster.markiere(kamera)
         self._fenster.zeige_status("")
         log.info("zeige %s (%s)", kamera, self._zustand.modus.value)
 

@@ -1,0 +1,43 @@
+/* Aussehen des Panels. Aenderungen hier brauchen keinen Codeeingriff,
+   nach dem Bearbeiten genuegt systemctl restart panel. */
+
+.panel-hintergrund,
+.panel-video {
+  background-color: #0d0d0d;
+}
+
+.panel-knopf {
+  /* background-image: none haelt den Farbverlauf des GTK-Themas heraus. */
+  background-image: none;
+  background-color: #1a1a1a;
+  color: #e8e8e8;
+  border: none;
+  border-bottom: 1px solid #2b2b2b;
+  border-radius: 0;
+  font-size: 22px;
+  font-weight: 500;
+  padding: 0;
+  text-shadow: none;
+}
+
+.panel-knopf:hover {
+  background-color: #242424;
+}
+
+.panel-knopf:active {
+  background-color: #3a3a3a;
+}
+
+/* Zeigt, welche Kamera gerade laeuft. */
+.panel-knopf-aktiv {
+  background-color: #1e3f57;
+  color: #ffffff;
+  border-left: 6px solid #4a9fd8;
+}
+
+.panel-status {
+  background-color: #0d0d0d;
+  color: #e0a030;
+  font-size: 16px;
+  padding: 4px 8px;
+}
