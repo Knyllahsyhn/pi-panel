@@ -57,6 +57,18 @@ chmod +x "$ZIEL/systemd/panel-session.sh"
 echo "== Dienst =="
 # Desktop-Sitzung nicht mehr automatisch starten. Per SSH bleibt alles erreichbar.
 systemctl set-default multi-user.target
+
+# set-default aendert nur das Boot-Ziel. Laeuft der Displaymanager noch, haelt er
+# :0 weiter und xinit scheitert mit "Server is already active for display 0".
+if systemctl is-enabled display-manager.service >/dev/null 2>&1; then
+  echo "   Displaymanager wird abgeschaltet."
+  systemctl disable display-manager.service || true
+fi
+if systemctl is-active display-manager.service >/dev/null 2>&1; then
+  echo "   Displaymanager laeuft noch und wird gestoppt."
+  systemctl stop display-manager.service || true
+  rm -f /tmp/.X0-lock
+fi
 sed "s|__ZIEL__|$ZIEL|g" "$ZIEL/systemd/panel.service" > /etc/systemd/system/panel.service
 chmod 644 /etc/systemd/system/panel.service
 systemctl daemon-reload

@@ -110,6 +110,17 @@ starten, statt halb konfiguriert zu laufen. Die Meldung nennt das Feld.
 Der Dienst laeuft als Benutzer `panel`, nicht als root. `chown root:panel` und
 `chmod 640`.
 
+**`Server is already active for display 0`.**
+Der Displaymanager haelt noch `:0`. `systemctl set-default multi-user.target`
+aendert nur das Boot-Ziel und stoppt die laufende Sitzung nicht.
+
+```bash
+sudo systemctl stop panel
+sudo systemctl disable --now display-manager
+sudo rm -f /tmp/.X0-lock
+sudo systemctl start panel
+```
+
 **Kein X-Server, `xinit` bricht ab.**
 `/etc/X11/Xwrapper.config` muss `allowed_users=anybody` enthalten, sonst darf
 nur die Konsolensitzung X starten. `install.sh` setzt das.
