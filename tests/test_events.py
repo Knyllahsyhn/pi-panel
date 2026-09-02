@@ -46,3 +46,30 @@ def test_fremdes_topic_wird_ignoriert():
     e = Entprellung(gesehen.append)
     e.nachricht("frigate/klingel/car", b"1")
     assert gesehen == []
+
+
+def test_state_suffix_loest_auch_aus():
+    gesehen = []
+    e = Entprellung(gesehen.append)
+    e.nachricht("frigate/klingel/person/state", b"1")
+    assert gesehen == ["klingel"]
+
+
+def test_fremdes_viertes_segment_wird_ignoriert():
+    gesehen = []
+    e = Entprellung(gesehen.append)
+    e.nachricht("frigate/klingel/person/threshold", b"1")
+    assert gesehen == []
+
+
+def test_konfigtopics_werden_ignoriert():
+    gesehen = []
+    e = Entprellung(gesehen.append)
+    for topic in (
+        "frigate/klingel/detect/state",
+        "frigate/klingel/motion_threshold/state",
+        "frigate/klingel/status/detect",
+        "frigate/available",
+    ):
+        e.nachricht(topic, b"1")
+    assert gesehen == []
