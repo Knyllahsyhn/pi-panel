@@ -152,6 +152,20 @@ dann mit `Server is already active for display 0`. Umstellen ueber `raspi-config
 Advanced Options, Wayland, X11. Achtung: **wayvnc funktioniert danach nicht
 mehr**, als Ersatz `x11vnc -display :0 -localhost` verwenden.
 
+**Dienst beendet sich sofort, Neustart alle 5 Sekunden.**
+`RestartSec` ist 5, das Programm steigt also unmittelbar aus. Erst die Schleife
+anhalten (`systemctl stop panel`), dann den Log ohne Xorg-Rauschen ansehen:
+
+```bash
+journalctl -u panel --since "-1 min" --no-pager \
+  | grep -viE 'X\.Org|LoadModule|Option "|\(II\)|\(\*\*\)'
+```
+
+Haeufigste Ursache: `python3 -m panel.main` findet das Paket nicht. Pruefen mit
+`systemctl cat panel | grep -E 'WorkingDirectory|ExecStart'` -- steht dort noch
+`__ZIEL__` statt eines echten Pfades, wurde die Unit von Hand kopiert, ohne den
+Platzhalter zu ersetzen. `install.sh` erledigt das sonst.
+
 **Kein X-Server, `xinit` bricht ab.**
 `/etc/X11/Xwrapper.config` muss `allowed_users=anybody` enthalten, sonst darf
 nur die Konsolensitzung X starten. `install.sh` setzt das.
