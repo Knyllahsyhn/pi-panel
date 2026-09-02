@@ -31,7 +31,7 @@ quelle:
 
 kameras:
   - {name: klingel,   label: "Klingel",    springt: true}
-  - {name: haustuer,  label: "Haustuer",   springt: true}
+  - {name: haustuer,  label: "Haustür",   springt: true}
   - {name: einfahrt1, label: "Einfahrt 1", springt: false}
   - {name: einfahrt2, label: "Einfahrt 2", springt: false}
   - {name: pergola,   label: "Pergola",    springt: false}
