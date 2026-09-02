@@ -25,7 +25,9 @@ apt-get install -y --no-install-recommends \
 echo "== Benutzer =="
 id -u panel >/dev/null 2>&1 \
   || useradd --system --create-home --shell /usr/sbin/nologin panel
-usermod -aG video,input,tty panel
+# render fuer /dev/dri/renderD128, sonst meldet Mesa "Permission denied".
+usermod -aG video,input,tty,render panel 2>/dev/null \
+  || usermod -aG video,input,tty panel
 
 echo "== Konfiguration =="
 mkdir -p "$KONFIG"

@@ -8,9 +8,12 @@ import time
 
 SOCKET_PFAD = "/run/panel/mpv.sock"
 MAX_BACKOFF_S = 30.0
+# auto-safe probiert auf dem Pi reihenweise Dekoder durch, die es dort nicht
+# gibt, und landet bei Software. v4l2m2m spricht den Hardwaredekoder an.
+STANDARD_HWDEC = "auto-safe"
 
 
-def mpv_argumente(wid, socket_pfad, tls_verify):
+def mpv_argumente(wid, socket_pfad, tls_verify, hwdec=STANDARD_HWDEC):
     return [
         "mpv",
         "--idle=yes",
@@ -20,16 +23,17 @@ def mpv_argumente(wid, socket_pfad, tls_verify):
         "--no-audio",
         "--no-osc",
         "--no-input-default-bindings",
-        "--hwdec=auto-safe",
+        "--hwdec=%s" % hwdec,
         "--tls-verify=%s" % ("yes" if tls_verify else "no"),
     ]
 
 
-def mpv_starten(wid, socket_pfad=SOCKET_PFAD, tls_verify=False):
+def mpv_starten(wid, socket_pfad=SOCKET_PFAD, tls_verify=False,
+                hwdec=STANDARD_HWDEC):
     os.makedirs(os.path.dirname(socket_pfad), exist_ok=True)
     if os.path.exists(socket_pfad):
         os.unlink(socket_pfad)
-    subprocess.Popen(mpv_argumente(wid, socket_pfad, tls_verify))
+    subprocess.Popen(mpv_argumente(wid, socket_pfad, tls_verify, hwdec))
     for _ in range(50):
         if os.path.exists(socket_pfad):
             break

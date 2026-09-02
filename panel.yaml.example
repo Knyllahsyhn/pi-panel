@@ -19,6 +19,10 @@ anzeige:
 
 quelle:
   modus: rtsp
+  # auto-safe probiert auf dem Pi Dekoder durch, die es dort nicht gibt, und
+  # faellt auf Software zurueck. v4l2m2m nutzt den Hardwaredekoder, no erzwingt
+  # Software. Vor dem Umstellen messen, v4l2m2m ist nicht auf jedem Pi stabil.
+  hwdec: auto-safe
   mjpeg:
     pfad: "/api/{cam}?fps=5&h=480&bbox=0"
   rtsp:

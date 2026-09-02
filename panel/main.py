@@ -49,7 +49,11 @@ class Panel:
     def _nach_dem_anzeigen(self):
         wid = self._fenster.fenster_id()
         self._player = Player(
-            lambda: mpv_starten(wid, tls_verify=self._konfig.frigate.tls_verify),
+            lambda: mpv_starten(
+                wid,
+                tls_verify=self._konfig.frigate.tls_verify,
+                hwdec=self._konfig.quelle.get("hwdec", "auto-safe"),
+            ),
             bei_streamende=self._bei_streamende,
         )
         threading.Thread(target=self._player.beobachten, daemon=True).start()

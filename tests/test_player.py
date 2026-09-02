@@ -90,3 +90,10 @@ def test_tls_verify_wird_durchgereicht():
 
     assert "--tls-verify=no" in mpv_argumente(1, "/tmp/s", tls_verify=False)
     assert "--tls-verify=yes" in mpv_argumente(1, "/tmp/s", tls_verify=True)
+
+
+def test_hwdec_wird_durchgereicht():
+    from panel.player import mpv_argumente
+
+    assert "--hwdec=v4l2m2m" in mpv_argumente(1, "/tmp/s", False, hwdec="v4l2m2m")
+    assert "--hwdec=auto-safe" in mpv_argumente(1, "/tmp/s", False)
