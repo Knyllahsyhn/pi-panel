@@ -1,6 +1,6 @@
 # pi-panel
 
-Kamera-Panel fuer Raspberry Pi. Zeigt die Streams eines Frigate-NVR auf einem
+Kamera-Panel für Raspberry Pi. Zeigt die Streams eines Frigate-NVR auf einem
 7-Zoll-Touchscreen.
 
 Grundbild ist die Klingelkamera. Ein Druck auf einen Knopf schaltet um, nach
