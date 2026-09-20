@@ -101,11 +101,26 @@ praktisch die heutigen 80.
 Gibt es nur eine Seite, wird die Pfeilzeile gar nicht erst gepackt, damit
 keine toten Bedienelemente herumstehen.
 
+### Aufbau der Leiste
+
+`leiste` bleibt die vertikale `Gtk.Box` mit
+`set_size_request(KNOPFBREITE, -1)`, enthaelt aber kuenftig zwei Kinder: den
+Stack mit `expand=True, fill=True` und darunter die Pfeilzeile mit
+`expand=False`.
+
+Kein `set_no_show_all` noetig: `show_all()` erreicht zwar alle Stack-Kinder,
+`Gtk.Stack` zeigt aber ohnehin nur das sichtbare.
+
 ### Neue und geaenderte Methoden
 
-- `_seite_zeigen(index)`: setzt das sichtbare Stack-Kind und die
-  Empfindlichkeit beider Pfeile (`set_sensitive`). Index wird ueber
-  `seiten.begrenzen` geklemmt.
+- `self._seite` haelt den sichtbaren Seitenindex, Startwert `0`.
+- `self._pfeile` ist `None`, wenn es nur eine Seite gibt, sonst das Paar
+  (links, rechts).
+- `_seite_zeigen(index)`: klemmt ueber `seiten.begrenzen`, setzt
+  `self._seite`, setzt das sichtbare Stack-Kind, und aktualisiert danach die
+  Empfindlichkeit der Pfeile per `set_sensitive`. Ist `self._pfeile` gleich
+  `None`, entfaellt der letzte Schritt, sonst laeuft die Methode bei einer
+  einzigen Seite auf einen Zugriff ins Leere.
 - `_bei_pfeil(richtung)`: `_seite_zeigen(self._seite + richtung)` und danach
   der Rueckruf `bei_bedienung()`.
 - `_markieren(kamera)`: wie heute die Aktiv-Klasse, zusaetzlich
@@ -196,8 +211,8 @@ damit in einem Griff abgedeckt.
 - Kamera nicht in der Aufteilung: `seite_mit` gibt `None`, die aktuelle Seite
   bleibt stehen. Kann bei gueltiger Konfiguration nicht auftreten, weil
   `lade()` die Basiskamera gegen die Kameraliste prueft.
-- `knoepfe_pro_seite` groesser als die Kameraanzahl: eine Seite, keine
-  Pfeilzeile.
+- `knoepfe_pro_seite` groesser oder gleich der Kameraanzahl: eine Seite,
+  keine Pfeilzeile, `_seite_zeigen` ruehrt keine Pfeile an.
 - Reconnect: `_erneut_laden` ruft `_anwenden` und damit `markiere`. Blaettert
   jemand gerade und der Stream kommt wieder, springt die Seite zur laufenden
   Kamera. Selten und konsistent mit der Regel "Seite folgt der Kamera",
@@ -212,6 +227,8 @@ Neu `tests/test_seiten.py`:
 - `seite_mit` fuer eine Kamera auf der ersten Seite, eine auf der letzten,
   einen unbekannten Namen
 - `begrenzen` unterhalb 0, oberhalb der letzten Seite, innerhalb
+- `teile` mit `pro_seite` gleich der Kameraanzahl ergibt genau eine Seite,
+  nicht eine volle plus eine leere
 
 Ergaenzt `tests/test_state.py`:
 
