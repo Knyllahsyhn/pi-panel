@@ -16,6 +16,10 @@ anzeige:
   rueckfall_manuell_s: 60
   rueckfall_auto_s: 30
   sperrzeit_auto_s: 120
+  # Kameraknoepfe je Seite. Fehlt der Schluessel, stehen alle auf einer Seite
+  # und es gibt keine Blaetterpfeile. Bei 480 px Hoehe sind fuenf das Maximum,
+  # das sich noch bequem treffen laesst.
+  knoepfe_pro_seite: 5
 
 quelle:
   modus: rtsp
@@ -36,3 +40,8 @@ kameras:
   - {name: einfahrt2, label: "Einfahrt 2", springt: false}
   - {name: pergola,   label: "Pergola",    springt: false}
   - {name: garten,    label: "Garten",     springt: false}
+  # Platzhalter fuer die drei neuen Kameras. Namen muessen den Kameranamen in
+  # Frigate entsprechen, springt bewusst erst nach Entscheidung je Kamera.
+  - {name: neu1,      label: "Neu 1",      springt: false}
+  - {name: neu2,      label: "Neu 2",      springt: false}
+  - {name: neu3,      label: "Neu 3",      springt: false}

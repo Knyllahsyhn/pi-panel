@@ -58,6 +58,7 @@ Rechten. Im Modus `rtsp` wird sie nicht gelesen und darf fehlen.
 | `anzeige.rueckfall_manuell_s` | Sekunden bis zur Rueckkehr nach einem Knopfdruck |
 | `anzeige.rueckfall_auto_s` | Sekunden bis zur Rueckkehr nach einem Auto-Sprung |
 | `anzeige.sperrzeit_auto_s` | Ruhephase zwischen zwei Auto-Spruengen |
+| `anzeige.knoepfe_pro_seite` | optional, Kameraknoepfe je Seite. Fehlt er, stehen alle auf einer Seite und es gibt keine Blaetterpfeile |
 | `quelle.modus` | `rtsp` (Regelfall) oder `mjpeg` |
 | `kameras[].name` | Name der Kamera in Frigate |
 | `kameras[].label` | Beschriftung auf dem Knopf |
