@@ -30,7 +30,12 @@ class Panel:
         self._neuversuch_id = None
         self._header = None
         self._anmeldung = self._anmeldung_bauen()
-        self._fenster = Fenster(konfig.kameras, self._bei_knopfdruck)
+        self._fenster = Fenster(
+            konfig.kameras,
+            konfig.knoepfe_pro_seite,
+            self._bei_knopfdruck,
+            self._bei_bedienung,
+        )
 
     def _anmeldung_bauen(self):
         # Variante A holt RTSP direkt von go2rtc, dort gibt es nichts anzumelden.
@@ -88,6 +93,15 @@ class Panel:
             self._zustand, self._konfig.regeln, kamera, time.monotonic()
         )
         self._anwenden()
+
+    def _bei_bedienung(self):
+        # Bedienung ohne Kamerawechsel, etwa ein Blaetterpfeil. Bewusst ohne
+        # _anwenden(): sichtbar aendert sich nichts, und ein Neuladen des
+        # Streams waere hier reine Unruhe. Ohne markiere() bleibt ausserdem die
+        # geblaetterte Seite stehen statt zur laufenden Kamera zurueckzuspringen.
+        self._zustand = state.bei_bedienung(
+            self._zustand, self._konfig.regeln, time.monotonic()
+        )
 
     def _bei_person(self, kamera):
         # Kommt aus dem MQTT-Thread, deshalb in den GTK-Thread zurueckreichen.

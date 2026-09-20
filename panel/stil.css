@@ -41,3 +41,41 @@
   font-size: 16px;
   padding: 4px 8px;
 }
+
+/* Blaetterpfeile am Fuss der Leiste. */
+.panel-pfeil {
+  background-image: none;
+  background-color: #1a1a1a;
+  color: #e8e8e8;
+  border: none;
+  border-top: 1px solid #2b2b2b;
+  border-radius: 0;
+  font-size: 30px;
+  padding: 0;
+  text-shadow: none;
+}
+
+/* Trennt die beiden Pfeile, ohne dass sie je eine eigene Klasse brauchen. */
+.panel-pfeil:first-child {
+  border-right: 1px solid #2b2b2b;
+}
+
+.panel-pfeil:hover {
+  background-color: #242424;
+}
+
+.panel-pfeil:active {
+  background-color: #3a3a3a;
+}
+
+/* Am ersten bzw. letzten Blatt geht es nicht weiter. Gleicher Hintergrund,
+   abgesenkte Schrift: der Pfeil ist sichtbar da, aber sichtbar tot. */
+.panel-pfeil:disabled {
+  background-color: #1a1a1a;
+  color: #333333;
+}
+
+/* Fuellplaetze der letzten Seite, damit dort kein Loch klafft. */
+.panel-luecke {
+  background-color: #1a1a1a;
+}
