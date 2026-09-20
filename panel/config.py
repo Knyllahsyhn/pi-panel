@@ -36,6 +36,7 @@ class Konfig:
     regeln: Regeln
     kameras: list
     quelle: dict
+    knoepfe_pro_seite: int
 
 
 def _pflicht(daten, pfad):
@@ -52,6 +53,23 @@ def _passwort(pfad):
         return Path(pfad).read_text().strip()
     except OSError as fehler:
         raise KonfigFehler("Passwortdatei nicht lesbar: %s" % pfad) from fehler
+
+
+def _knoepfe_pro_seite(roh, anzahl_kameras):
+    """Knoepfe je Seite, oder alle auf eine Seite wenn der Schluessel fehlt.
+
+    Bewusst optional: das erste Panel laeuft im Feld ohne diesen Schluessel und
+    darf beim naechsten Deploy nicht am Konfigfehler haengenbleiben.
+    """
+    wert = (roh.get("anzeige") or {}).get("knoepfe_pro_seite")
+    if wert is None:
+        return anzahl_kameras
+    # bool ist in Python eine Ganzzahl, "knoepfe_pro_seite: true" waere sonst 1.
+    if isinstance(wert, bool) or not isinstance(wert, int):
+        raise KonfigFehler("anzeige.knoepfe_pro_seite muss eine Ganzzahl sein")
+    if wert < 1:
+        raise KonfigFehler("anzeige.knoepfe_pro_seite muss mindestens 1 sein")
+    return wert
 
 
 def lade(pfad):
@@ -77,6 +95,8 @@ def lade(pfad):
     namen = {k.name for k in kameras}
     if basis not in namen:
         raise KonfigFehler("basis_kamera %s steht nicht in kameras" % basis)
+
+    knoepfe_pro_seite = _knoepfe_pro_seite(roh, len(kameras))
 
     regeln = Regeln(
         basis_kamera=basis,
@@ -120,6 +140,7 @@ def lade(pfad):
         regeln=regeln,
         kameras=kameras,
         quelle=quelle,
+        knoepfe_pro_seite=knoepfe_pro_seite,
     )
 
 

@@ -112,3 +112,32 @@ def test_mjpeg_braucht_die_frigate_passwortdatei(konfigdatei, tmp_path):
     konfigdatei.write_text(inhalt)
     with pytest.raises(KonfigFehler, match="gibtsnicht.pass"):
         lade(konfigdatei)
+
+
+def test_knoepfe_pro_seite_fehlt_ergibt_eine_seite(konfigdatei):
+    # Bestandsschutz: das Panel im Feld hat den Schluessel nicht.
+    k = lade(konfigdatei)
+    assert k.knoepfe_pro_seite == len(k.kameras)
+
+
+def test_knoepfe_pro_seite_wird_uebernommen(tmp_path):
+    k = lade(_mit_pro_seite(tmp_path, "  knoepfe_pro_seite: 1"))
+    assert k.knoepfe_pro_seite == 1
+
+
+@pytest.mark.parametrize("wert", ["0", "-1", "zwei", "true", "2.5"])
+def test_knoepfe_pro_seite_ungueltig(tmp_path, wert):
+    with pytest.raises(KonfigFehler):
+        lade(_mit_pro_seite(tmp_path, "  knoepfe_pro_seite: %s" % wert))
+
+
+def _mit_pro_seite(tmp_path, zeile):
+    pw = tmp_path / "geheim.pass"
+    pw.write_text("s3cr3t\n")
+    text = BASIS.format(pw=pw).replace(
+        "  sperrzeit_auto_s: 120",
+        "  sperrzeit_auto_s: 120\n" + zeile,
+    )
+    datei = tmp_path / "panel.yaml"
+    datei.write_text(text)
+    return datei
