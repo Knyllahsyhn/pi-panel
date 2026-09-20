@@ -1,5 +1,13 @@
 import pytest
-from panel.state import Modus, Regeln, start, bei_touch, bei_person, bei_tick
+from panel.state import (
+    Modus,
+    Regeln,
+    start,
+    bei_touch,
+    bei_person,
+    bei_tick,
+    bei_bedienung,
+)
 
 REGELN = Regeln(
     basis_kamera="klingel",
@@ -91,3 +99,35 @@ def test_touch_gewinnt_gegen_auto():
 def test_tick_in_basis_aendert_nichts():
     a = start(REGELN, 1000.0)
     assert bei_tick(a, REGELN, jetzt=99999.0) == a
+
+
+def test_bedienung_in_basis_aendert_nichts():
+    z = start(REGELN, 0.0)
+    assert bei_bedienung(z, REGELN, 50.0) == z
+
+
+def test_bedienung_in_manuell_verlaengert_die_anzeige():
+    z = bei_touch(start(REGELN, 0.0), REGELN, "pergola", 0.0)
+    z = bei_bedienung(z, REGELN, 55.0)
+    # Ohne den Reset waere der Rueckfall bei 60 s faellig.
+    z = bei_tick(z, REGELN, 61.0)
+    assert z.modus is Modus.MANUELL
+    assert z.kamera == "pergola"
+
+
+def test_bedienung_in_auto_verlaengert_und_laesst_modus_stehen():
+    z = bei_person(start(REGELN, 0.0), REGELN, "haustuer", 10.0)
+    assert z.modus is Modus.AUTO
+    neu = bei_bedienung(z, REGELN, 25.0)
+    assert neu.modus is Modus.AUTO
+    assert neu.kamera == z.kamera
+    assert neu.letzter_autosprung == z.letzter_autosprung
+    assert neu.seit == 25.0
+
+
+def test_bedienung_in_auto_sperrt_weitere_spruenge_nicht():
+    # Blaettern ist keine Kamerawahl, die Automatik bleibt zustaendig.
+    z = bei_person(start(REGELN, 0.0), REGELN, "haustuer", 10.0)
+    z = bei_bedienung(z, REGELN, 20.0)
+    z = bei_tick(z, REGELN, 60.0)
+    assert z.modus is Modus.BASIS

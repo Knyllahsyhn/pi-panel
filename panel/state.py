@@ -40,6 +40,21 @@ def bei_touch(zustand, regeln, kamera, jetzt):
     return replace(zustand, modus=Modus.MANUELL, kamera=kamera, seit=jetzt)
 
 
+def bei_bedienung(zustand, regeln, jetzt):
+    """Verlaengert die laufende Anzeige, ohne die Kamera zu wechseln.
+
+    Gedacht fuer Bedienung, die nichts umschaltet, etwa das Blaettern in der
+    Knopfleiste. Ohne diesen Eingang reisst der Rueckfall die Kamera mitten im
+    Blaettern weg.
+    """
+    if zustand.modus is Modus.BASIS:
+        # Die Basiskamera laeuft unbefristet, es gibt nichts zu verlaengern.
+        return zustand
+    # Der Modus bleibt stehen. MANUELL bedeutet "hat eine Kamera gewaehlt", und
+    # Blaettern ist keine Kamerawahl.
+    return replace(zustand, seit=jetzt)
+
+
 def bei_person(zustand, regeln, kamera, jetzt):
     if kamera not in regeln.sprungliste:
         return zustand
