@@ -15,6 +15,10 @@ TTYPath=/dev/tty7
 StandardInput=tty
 StandardOutput=journal
 StandardError=journal
+# pam_systemd verschiebt die Prozesse nach session-N.scope, journald ordnet
+# die Ausgabe dann dort ein und `journalctl -u panel` zeigt nur systemd-Zeilen.
+# Die Kennung reist im Stream-Header mit und bleibt erhalten.
+SyslogIdentifier=panel
 TTYVTDisallocate=yes
 RuntimeDirectory=panel
 Environment=DISPLAY=:0

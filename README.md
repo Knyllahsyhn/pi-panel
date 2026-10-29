@@ -80,8 +80,12 @@ jedem Passanten umschalten. Im Zweifel nur die Kamera an der Tuer.
 ```bash
 systemctl status panel
 systemctl restart panel
-journalctl -u panel -f
+journalctl -t panel -f
 ```
+
+`-t panel` statt `-u panel`: Wegen `PAMName=login` landen die Prozesse in
+einer logind-Sitzung, und journald ordnet ihre Ausgabe `session-N.scope` zu.
+Unter `-u panel` stehen nur die systemd-Zeilen, keine Fehlermeldungen.
 
 Im Log steht bei jedem Wechsel, welche Kamera gezeigt wird und warum
 (`basis`, `manuell`, `auto`).
@@ -158,11 +162,19 @@ mehr**, als Ersatz `x11vnc -display :0 -localhost` verwenden.
 anhalten (`systemctl stop panel`), dann den Log ohne Xorg-Rauschen ansehen:
 
 ```bash
-journalctl -u panel --since "-1 min" --no-pager \
+journalctl -t panel --since "-1 min" --no-pager \
   | grep -viE 'X\.Org|LoadModule|Option "|\(II\)|\(\*\*\)'
 ```
 
-Haeufigste Ursache: `python3 -m panel.main` findet das Paket nicht. Pruefen mit
+Haeufigste Ursache ist eine kaputte `panel.yaml`, etwa Reste vom Kopieren aus
+einem Editor ueber der ersten Zeile. Das Log zeigt dann
+`ERROR Konfiguration fehlerhaft: ...`. Pruefen ohne X-Server:
+
+```bash
+sudo -u panel python3 -c "from panel.config import lade; lade('/etc/panel/panel.yaml')"
+```
+
+Zweithaeufigste: `python3 -m panel.main` findet das Paket nicht. Pruefen mit
 `systemctl cat panel | grep -E 'WorkingDirectory|ExecStart'` -- steht dort noch
 `__ZIEL__` statt eines echten Pfades, wurde die Unit von Hand kopiert, ohne den
 Platzhalter zu ersetzen. `install.sh` erledigt das sonst.
